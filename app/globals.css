@@ -4556,11 +4556,40 @@
   max-width: 1040px;
   margin-inline: auto;
 }
-.stream-heading {
-  margin-bottom: 1.5rem;
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 700;
-  line-height: 1.2;
+.stream-tabs {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  margin: 0 auto 1.5rem;
+  border: 1px solid #ffffff33;
+  border-radius: 999px;
+  background: #0c10204d;
+}
+.stream-tab {
+  min-width: 6rem;
+  min-height: 44px;
+  padding: 0.625rem 1.5rem;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.stream-tab:hover {
+  background: #ffffff1a;
+}
+.stream-tab[aria-selected="true"] {
+  color: #003ac2;
+  background: #fff;
+}
+.stream-tab:focus-visible,
+.stream-panel:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+.stream-direct-day + .stream-direct-day {
+  margin-inline-start: 1rem;
 }
 .stream-player {
   display: block;
@@ -4572,6 +4601,17 @@
   border: 1px solid #ffffff33;
   border-radius: 0.75rem;
   background: #0c1020;
+}
+.stream-unavailable {
+  display: grid;
+  align-content: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+.stream-unavailable p + p {
+  color: #e2e8f0;
+  font-size: 0.875rem;
 }
 .stream-player:focus-visible {
   outline: 2px solid #fff;
