@@ -4547,6 +4547,47 @@
 .stream-content {
   min-height: 100svh;
 }
+.stream-video-container {
+  position: relative;
+  z-index: 1;
+}
+.stream-video {
+  width: 100%;
+  max-width: 1040px;
+  margin-inline: auto;
+}
+.stream-heading {
+  margin-bottom: 1.5rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.stream-player {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  /* Leave room for Drive's controls and error messages on narrow screens. */
+  min-height: 280px;
+  border: 1px solid #ffffff33;
+  border-radius: 0.75rem;
+  background: #0c1020;
+}
+.stream-player:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+.stream-help {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: #e2e8f0;
+}
+.stream-help a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
 .skip-link {
   z-index: 60;
   color: #fff;

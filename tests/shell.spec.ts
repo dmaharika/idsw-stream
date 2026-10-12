@@ -1,6 +1,15 @@
 import { expect, test } from "@playwright/test";
+import { video } from "../config/video";
 
-test("renders the blank conference shell without hydration or asset errors", async ({
+// Keep app checks independent of Drive's network, cookies, and playback limits.
+// Real provider playback is verified separately in a browser.
+test.beforeEach(async ({ context }) => {
+  await context.route(video.embedUrl, (route) =>
+    route.fulfill({ contentType: "text/html", body: "<p>Video preview</p>" }),
+  );
+});
+
+test("renders the responsive video and conference shell without app errors", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -13,8 +22,23 @@ test("renders the blank conference shell without hydration or asset errors", asy
   expect(response?.status()).toBe(200);
   await expect(page).toHaveTitle("IDSW Stream");
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator("main")).toHaveText("");
-  await expect(page.locator("iframe, video, audio, form")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "IDSW Stream" })).toBeVisible();
+  const player = page.locator("iframe");
+  await expect(player).toHaveCount(1);
+  await expect(player).toHaveAttribute("title", video.title);
+  await expect(player).toHaveAttribute(
+    "src",
+    "https://drive.google.com/file/d/1ETJtIVmHI3KnteYDXmnUty6fzEJMyiHl/preview",
+  );
+  await expect(player).toHaveAttribute("allow", "fullscreen");
+  await expect(player).toHaveAttribute("allowfullscreen", "");
+  const bounds = await player.boundingBox();
+  expect(bounds).not.toBeNull();
+  expect(bounds!.height).toBeCloseTo(Math.max(280, bounds!.width * 9 / 16), 1);
+  await expect(page.getByRole("link", { name: "Open in Google Drive" })).toHaveAttribute(
+    "href",
+    video.watchUrl,
+  );
   await expect(page.getByAltText("IDSW 2026")).toHaveCount(2);
   expect(
     await page
@@ -35,6 +59,23 @@ test("renders the blank conference shell without hydration or asset errors", asy
   await page.keyboard.press("Enter");
   await expect(page.locator("main")).toBeFocused();
   expect(errors).toEqual([]);
+});
+
+test("the direct video link works when the embedded preview cannot load", async ({
+  page,
+  context,
+}) => {
+  await context.route(video.embedUrl, (route) => route.abort());
+  await context.route(video.watchUrl, (route) =>
+    route.fulfill({ contentType: "text/html", body: "<p>Direct video page</p>" }),
+  );
+  await page.goto("/");
+  const newPage = context.waitForEvent("page");
+  await page.getByRole("link", { name: "Open in Google Drive" }).click();
+  const directVideo = await newPage;
+  await expect(directVideo).toHaveURL(video.watchUrl);
+  await expect(directVideo.locator("body")).toHaveText("Direct video page");
+  await expect(page.locator("main")).toBeVisible();
 });
 
 test("mobile navigation supports keyboard, Escape, link clicks, and resize", async ({
@@ -85,11 +126,16 @@ test("server-rendered content and CSS menu work without JavaScript", async ({
     viewport: { width: 390, height: 844 },
   });
   try {
+    await context.route(video.embedUrl, (route) =>
+      route.fulfill({ contentType: "text/html", body: "<p>Video preview</p>" }),
+    );
     const page = await context.newPage();
     await page.goto(baseURL!);
     await expect(page.getByAltText("IDSW 2026")).toHaveCount(2);
     await expect(page.locator("footer")).toContainText("Updates & Questions");
-    await expect(page.locator("main")).toHaveText("");
+    await expect(page.getByRole("heading", { name: "IDSW Stream" })).toBeVisible();
+    await expect(page.locator("iframe")).toHaveAttribute("src", video.embedUrl);
+    await expect(page.getByRole("link", { name: "Open in Google Drive" })).toBeVisible();
     await page.locator(".site-nav-toggle").click();
     await expect(page.locator(".site-nav-panel")).toBeVisible();
   } finally {

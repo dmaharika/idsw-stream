@@ -1,6 +1,6 @@
 # IDSW Stream
 
-The streaming website for [Indonesia Software Developer Conference](https://www.idsw.dev/). It shares the conference website's header, navigation, branding, and footer, with an empty main area ready for streaming content.
+The streaming website for [Indonesia Software Developer Conference](https://www.idsw.dev/). Watch the conference recording through an embedded Google Drive player, with the conference website's header, navigation, branding, and footer.
 
 ## Getting started
 
@@ -33,10 +33,19 @@ npm start
 │   ├── SiteHeader.tsx   Shared navigation
 │   ├── HeaderBehavior.tsx  Mobile menu and scroll behavior
 │   └── SiteFooter.tsx   Event information and social links
+├── config/video.ts     Video source and accessible player title
 ├── public/assets/      Conference branding, icons, and local fonts
 ├── tests/              Browser checks
 └── .github/workflows/  Continuous integration
 ```
+
+## Video configuration
+
+Edit `config/video.ts` to replace the recording. Set `fileId` to the ID between `/d/` and `/view` in the Google Drive share URL, and update `title` to describe the video. The app derives the embedded `/preview` URL and the direct viewing link from that ID. Rebuild and redeploy after changing it.
+
+In Google Drive, allow the intended viewers to view the file. For playback without a Google account, use **Share → General access → Anyone with the link → Viewer** ([Google's sharing guide](https://support.google.com/drive/answer/2494822?hl=en)). Check the preview in a signed-out browser after uploading and processing the video. This app does not authenticate viewers; access to the recording follows the file's Google Drive sharing settings.
+
+The player uses a responsive 16:9 frame with a minimum height of 280px so Google's controls and error messages fit on narrow screens. It allows fullscreen and does not request autoplay. Google Drive needs an internet connection and JavaScript for playback. Its own preview displays any access, processing, or playback error. The page always offers **Open in Google Drive** so viewers can try the original file; that link does not bypass sharing restrictions. The app cannot inspect errors inside the cross-origin player.
 
 ## Development
 
@@ -62,13 +71,14 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-The browser suite starts its own server on port 3100. It checks rendering, asset loading, keyboard navigation, menu behavior, and rendering without JavaScript. CI installs the required Linux browser dependencies and runs the same checks.
+The browser suite starts its own server on port 3100. It checks responsive player sizing, the fallback link when the embed fails, asset loading, keyboard navigation, menu behavior, and server-rendered content without JavaScript. It stubs Google Drive requests to keep app checks independent of the provider; it does not verify real video playback. CI installs the required Linux browser dependencies and runs the same checks.
 
 When making changes:
 
 - Check desktop and mobile layouts.
 - Verify keyboard navigation and visible focus states.
 - Test the mobile menu and header while scrolling.
+- With the real Google Drive source, check play/pause, seeking, fullscreen, and signed-out access on desktop and mobile.
 - Keep the shared header and footer consistent with the conference website.
 
 ## Contributing
