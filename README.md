@@ -22,6 +22,29 @@ npm run build
 npm start
 ```
 
+## Deploy to Vercel
+
+Push this application's Git repository to your Git provider, then import it as a new Vercel project. The repository root should contain `package.json`, `app/`, and `public/`. Keep local environment files, dependencies, and build output out of Git.
+
+Use these project settings:
+
+| Setting | Value |
+| --- | --- |
+| Framework Preset | Next.js |
+| Root Directory | `./` when this app is the repository root |
+| Node.js Version | `22.x` (also specified in `package.json`) |
+| Install Command | `npm ci` |
+| Build Command | `npm run build` |
+| Output Directory | Leave the Next.js default; do not select `out` |
+
+Vercel supports this app's Next.js server rendering without a custom `vercel.json`. Its [Node.js version selection](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions) respects `package.json`; the major version is pinned to match local development and CI. See [Next.js on Vercel](https://vercel.com/docs/frameworks/full-stack/nextjs) for the framework integration.
+
+Before deploying, add `DAY_1_ID`, `DAY_2_ID`, and `DEFAULT_DAY` from `.env.example` to the project's **Environment Variables** for **Production** and **Preview**. Vercel does not obtain these values from your ignored `.env.local`, and `.env.example` is documentation, not an automatically loaded environment file. Missing video IDs allow the build to succeed but show unavailable recordings. [Environment changes apply to new deployments](https://vercel.com/docs/environment-variables), so redeploy after changing them.
+
+After deployment, open the HTTPS URL in a signed-out browser and verify both recordings, day switching, the default day after reloading, fullscreen, and the mobile layout. The video is served directly by Google Drive; the app does not proxy media through Vercel. No database or Google API credentials are required.
+
+This version provides unauthenticated access to the configured recordings. Drive sharing settings still control file access, and Drive preview errors can occur independently of a successful Vercel deployment. The direct viewing link remains available when a preview fails.
+
 ## Project structure
 
 ```text
