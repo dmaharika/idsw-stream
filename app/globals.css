@@ -21,9 +21,9 @@
   font-display: swap;
   font-weight: 400;
   src:
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-400-normal.Cg2kxhWu.woff2)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-400-normal.Cg2kxhWu.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-400-normal.B8TCSmUq.woff)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-400-normal.B8TCSmUq.woff)
       format("woff");
   unicode-range:
     U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1,
@@ -36,9 +36,9 @@
   font-display: swap;
   font-weight: 400;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-400-normal.D127hM_v.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-400-normal.D127hM_v.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-400-normal.2ppkqaOR.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-400-normal.2ppkqaOR.woff)
       format("woff");
   unicode-range:
     U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
@@ -51,9 +51,9 @@
   font-display: swap;
   font-weight: 400;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-400-normal.Dhut76fR.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-400-normal.Dhut76fR.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-400-normal.BDKaGhyp.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-400-normal.BDKaGhyp.woff)
       format("woff");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
@@ -79,9 +79,9 @@
   font-display: swap;
   font-weight: 500;
   src:
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-500-normal.DiU8zqi-.woff2)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-500-normal.DiU8zqi-.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-500-normal.CvE5C8T-.woff)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-500-normal.CvE5C8T-.woff)
       format("woff");
   unicode-range:
     U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1,
@@ -94,9 +94,9 @@
   font-display: swap;
   font-weight: 500;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-500-normal.9VZagAe1.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-500-normal.9VZagAe1.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-500-normal.CqEEAICU.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-500-normal.CqEEAICU.woff)
       format("woff");
   unicode-range:
     U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
@@ -109,9 +109,9 @@
   font-display: swap;
   font-weight: 500;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-500-normal.Bf-nb4oT.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-500-normal.Bf-nb4oT.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-500-normal.DYtqi0QS.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-500-normal.DYtqi0QS.woff)
       format("woff");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
@@ -137,9 +137,9 @@
   font-display: swap;
   font-weight: 600;
   src:
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-600-normal.Y4VTTRme.woff2)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-600-normal.Y4VTTRme.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-600-normal.5YsyKbU1.woff)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-600-normal.5YsyKbU1.woff)
       format("woff");
   unicode-range:
     U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1,
@@ -152,9 +152,9 @@
   font-display: swap;
   font-weight: 600;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-600-normal.DQgPU_Cg.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-600-normal.DQgPU_Cg.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-600-normal.B0WRRYJ1.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-600-normal.B0WRRYJ1.woff)
       format("woff");
   unicode-range:
     U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
@@ -167,9 +167,9 @@
   font-display: swap;
   font-weight: 600;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-600-normal.DLTa1BUW.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-600-normal.DLTa1BUW.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-600-normal.BR_Ojra4.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-600-normal.BR_Ojra4.woff)
       format("woff");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
@@ -195,9 +195,9 @@
   font-display: swap;
   font-weight: 700;
   src:
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-700-normal.CV6qDkkj.woff2)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-700-normal.CV6qDkkj.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-700-normal.BCh_uG_5.woff)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-700-normal.BCh_uG_5.woff)
       format("woff");
   unicode-range:
     U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1,
@@ -210,9 +210,9 @@
   font-display: swap;
   font-weight: 700;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-700-normal.BajbvANd.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-700-normal.BajbvANd.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-700-normal.8-d-IyIQ.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-700-normal.8-d-IyIQ.woff)
       format("woff");
   unicode-range:
     U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
@@ -225,9 +225,9 @@
   font-display: swap;
   font-weight: 700;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-700-normal.CfpNZvy6.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-700-normal.CfpNZvy6.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-700-normal.DqEcQeE5.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-700-normal.DqEcQeE5.woff)
       format("woff");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
@@ -253,9 +253,9 @@
   font-display: swap;
   font-weight: 800;
   src:
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-800-normal.CxbopLd3.woff2)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-800-normal.CxbopLd3.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-vietnamese-800-normal.BkoGl_sr.woff)
+    url(/assets/fonts/plus-jakarta-sans-vietnamese-800-normal.BkoGl_sr.woff)
       format("woff");
   unicode-range:
     U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1,
@@ -268,9 +268,9 @@
   font-display: swap;
   font-weight: 800;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-800-normal.B6BjB2Ju.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-800-normal.B6BjB2Ju.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-ext-800-normal.BPkb-LBK.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-ext-800-normal.BPkb-LBK.woff)
       format("woff");
   unicode-range:
     U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
@@ -283,9 +283,9 @@
   font-display: swap;
   font-weight: 800;
   src:
-    url(./assets/fonts/plus-jakarta-sans-latin-800-normal.CusIZhrK.woff2)
+    url(/assets/fonts/plus-jakarta-sans-latin-800-normal.CusIZhrK.woff2)
       format("woff2"),
-    url(./assets/fonts/plus-jakarta-sans-latin-800-normal.BRNHt2w0.woff)
+    url(/assets/fonts/plus-jakarta-sans-latin-800-normal.BRNHt2w0.woff)
       format("woff");
   unicode-range:
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
