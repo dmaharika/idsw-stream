@@ -1,75 +1,74 @@
 # IDSW Stream
 
-The video site for [Indonesia Software Developer Conference](https://www.idsw.dev/). It uses the conference site's header, branding, navigation, and footer, with a responsive Mux Player and accessible Day 1 / Day 2 tabs.
+Private conference recordings for [Indonesia Software Developer Conference](https://www.idsw.dev/). The app shares the conference site's branding and provides accessible Day 1 and Day 2 playback through Mux.
+
+Viewers enter an allowlisted email address, receive a six-digit code through Resend, and sign in with that code. Google Sheets is the attendee source of truth. Upstash Redis holds short-lived codes, rate limits, and sessions. Mux playback tokens are issued only after the server verifies an active session and current allowlist membership.
 
 ## Getting started
 
 Use Node.js 22 and npm:
 
 ```bash
-nvm use
 npm ci
-test -e .env.local || cp .env.example .env.local
+cp .env.example .env.local
 npm run dev
 ```
 
-Open <http://localhost:3000>. The page shows an unavailable message until you configure signed Mux playback. To run a production build locally, use `npm run build` followed by `npm start`.
+Open <http://localhost:3000>. Fill `.env.local` with the values below before requesting a code. The file is ignored by Git. Restart the local server after changing it.
 
-## Video configuration
+## Configuration
 
-Set the following values in `.env.local` or your hosting environment:
-
-| Variable | Meaning |
+| Variable | Purpose |
 | --- | --- |
-| `DAY_1_ID` | Signed Mux **playback ID** for Day 1, not its asset ID |
-| `DAY_2_ID` | Signed Mux **playback ID** for Day 2 |
+| `DAY_1_ID`, `DAY_2_ID` | Signed Mux playback IDs, not asset IDs |
 | `MUX_SIGNING_KEY_ID` | Mux signing key ID |
-| `MUX_SIGNING_PRIVATE_KEY` | Base64-encoded private key returned when that key was created |
-| `MUX_PLAYBACK_RESTRICTION_ID` | Referrer restriction ID for allowed app hostnames |
-| `DEFAULT_DAY` | Initially selected day: `1` or `2` (defaults to `1`) |
+| `MUX_SIGNING_PRIVATE_KEY` | Base64-encoded signing private key |
+| `MUX_PLAYBACK_RESTRICTION_ID` | Mux referrer restriction for the app hostnames |
+| `DEFAULT_DAY` | Initially selected day, `1` or `2` |
+| `APP_URL` | Exact app origin, such as `http://localhost:3000` locally or the HTTPS production URL |
+| `GOOGLE_SHEET_ID` | Private spreadsheet ID |
+| `GOOGLE_SHEET_RANGE` | Header-inclusive range, such as `'Allowlist'!A:D` |
+| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | Service account email shared on the sheet as Viewer |
+| `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` | PEM, base64 PEM, or base64 PKCS#8 key body; literal `\\n` is accepted |
+| `RESEND_API_KEY` | Resend sending API key |
+| `RESEND_FROM_EMAIL` | Sender address on a verified Resend domain |
+| `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST endpoint and read/write token |
+| `SESSION_SECRET` | Random secret of at least 32 characters |
 
-Create the playback IDs, signing key, and referrer restriction through the [Mux API](https://www.mux.com/docs/guides/secure-video-playback). The API access token used for setup is **not** needed by this viewer. Keep the private signing key server-only; never use `NEXT_PUBLIC_` for it or commit `.env.local`. The app signs playback, thumbnail, and storyboard tokens on the server and includes the restriction ID. It does not expose a direct Mux viewing link.
+The Sheet must have `email`, `name`, and `enabled` or `status` headers. Values `TRUE`, `enabled`, `active`, `1`, and `yes` grant access; conflicting duplicate rows deny access. The service account needs the Sheets read-only scope and Viewer access to the spreadsheet. Keep all credentials server-only and out of Git. Do not prefix them with `NEXT_PUBLIC_`.
 
-A referrer restriction limits ordinary browser playback to configured hostnames, but this version does not authenticate viewers. Anyone able to open an allowed site can receive a signed token, which can be reused until it expires. The current recordings are about eight hours long, so tokens remain valid for ten hours to avoid interrupting playback. Attendee authorization requires a separate login system.
-
-The app also sends `Content-Security-Policy: frame-ancestors 'self'` to prevent other sites from embedding its page in an iframe.
-
-If an ID, signing key, or restriction is missing or invalid, the corresponding day shows an unavailable message. Switching days removes the previous player and stops its playback. Reloading selects `DEFAULT_DAY`. JavaScript is required for the Mux player. The page reads configuration at request time; restart the local server after editing `.env.local`, or redeploy after changing hosted environment variables.
-
-## Deploy to Vercel
-
-Import this repository as a Vercel project with the Next.js framework preset and Node.js `22.x`. Use the repository root as the project root, `npm ci` to install, and `npm run build` to build. Leave the output directory at the framework default.
-
-Add the six viewer variables above to the desired project environments. `.env.local` is ignored by Git and is not uploaded. Make sure the Vercel hostname and any custom stream domain are in the Mux referrer restriction, then redeploy. Do not add the Mux management API token ID or secret to Vercel. The player fetches video directly from Mux; this app does not proxy media.
-
-After deployment, test both recordings in a signed-out browser, including playback, seeking, day switching, fullscreen, and mobile layout. Also verify that a hostname outside the restriction cannot play the videos. Mux asset readiness and restriction rules can fail independently of a successful Vercel build.
-
-## Project structure
-
-```text
-app/                 Next.js page, layout, and styles
-components/          Conference shell and day tabs
-config/video.ts      Server-side signing and runtime video configuration
-public/assets/       Conference branding, icons, and local fonts
-tests/               Browser and signing checks
-.env.example         Example playback settings
-```
+The app limits code requests and verification attempts, expires codes after five minutes, enforces a one-minute resend cooldown, and permits one active session per email. Sessions use an HTTP-only cookie and expire after 24 hours of inactivity. A removed attendee cannot receive new playback tokens after the short Sheet cache expires. Mux tokens are renewed while the recording is open so long recordings can continue playing.
 
 ## Development
 
 | Command | Purpose |
 | --- | --- |
-| `npm run dev` | Start the development server |
-| `npm run check` | Run lint, type checking, and production build |
-| `npm run test:e2e` | Run browser checks against the production build |
+| `npm run dev` | Start the local server |
+| `npm run check` | Lint, type-check, unit-test, and build |
+| `npm run test:e2e` | Run desktop and mobile browser checks after a build |
 
-For a full check, run `npm run check`, `npx playwright install chromium`, then `npm run test:e2e`. The browser suite verifies token creation, tabs, layout, navigation, and missing configuration. It does not replace testing real Mux playback on the final hostnames and devices.
+The `tests/` suite covers authentication, provider contracts, token security, and the locked viewer. A real end-to-end test also needs an enabled test mailbox and valid Mux host restrictions.
 
-Edit `app/page.tsx` for page content, `components/` for the shell and tabs, and `app/globals.css` for styling. Static assets are served from `public/assets/`. Keep the shared header, footer, logo, and typography consistent with the [conference website](https://github.com/idsw-dev/conference).
+## Deploy to Vercel
+
+Import this repository as a Next.js project using Node.js 22. Add all required variables in the Vercel project settings, set `APP_URL` to the exact deployed HTTPS origin, and allow that hostname in the Mux playback restriction. Deploy after adding or changing environment variables. Do not add the Mux management API token to this app; it only needs the signing key. Use a separate Upstash database for testing if live attendee sessions must remain untouched.
+
+The app sends `Content-Security-Policy: frame-ancestors 'self'` to prevent other sites from embedding the viewer. Referrer restrictions are a second playback control; the server checks the session and Sheet before issuing each token.
+
+## Project structure
+
+```text
+app/                 Next.js page and authenticated API routes
+components/          Conference shell, access form, and player
+config/video.ts      Public day configuration
+lib/                 Auth, Google Sheets, Redis, Resend, and Mux server code
+public/assets/       Conference branding, icons, and local fonts
+tests/               Unit and browser checks
+```
 
 ## Contributing
 
-Issues and pull requests are welcome. Describe the change and checks performed; include desktop and mobile screenshots for visual updates. Keep credentials and `.env.local` out of Git.
+Issues and pull requests are welcome. Describe the behavior changed and checks performed; include desktop and mobile screenshots for visual updates. Never commit credentials or `.env.local`.
 
 ## Credits
 
