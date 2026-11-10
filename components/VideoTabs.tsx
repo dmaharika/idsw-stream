@@ -1,5 +1,6 @@
 "use client";
 
+import MuxPlayer from "@mux/mux-player-react";
 import { useRef, useState, type KeyboardEvent } from "react";
 import type { DayId, VideoDay } from "@/config/video";
 
@@ -67,24 +68,15 @@ export default function VideoTabs({ days, defaultDay }: Props) {
           className="stream-panel"
         >
           {selectedDay === day.id && (day.video ? (
-            <>
-              <iframe
-                key={day.id}
-                className="stream-player"
-                src={day.video.embedUrl}
-                title={day.video.title}
-                width="1280"
-                height="720"
-                allow="fullscreen"
-                allowFullScreen
-              />
-              <p className="stream-help">
-                Having trouble playing the video?{" "}
-                <a href={day.video.watchUrl} target="_blank" rel="noopener noreferrer">
-                  Open in Google Drive<span className="sr-only"> (new tab)</span>
-                </a>
-              </p>
-            </>
+            <MuxPlayer
+              key={day.id}
+              className="stream-player"
+              playbackId={day.video.playbackId}
+              tokens={day.video.tokens}
+              streamType="on-demand"
+              title={day.video.title}
+              preload="none"
+            />
           ) : (
             <div className="stream-player stream-unavailable" role="status">
               <p>{day.label} recording is not available yet.</p>
@@ -93,16 +85,6 @@ export default function VideoTabs({ days, defaultDay }: Props) {
           ))}
         </div>
       ))}
-      <noscript>
-        <p className="stream-help">
-          To switch days, open a recording in Google Drive:{" "}
-          {days.filter((day) => day.video).map((day) => (
-            <a className="stream-direct-day" key={day.id} href={day.video!.watchUrl}>
-              {day.label}
-            </a>
-          ))}
-        </p>
-      </noscript>
     </>
   );
 }

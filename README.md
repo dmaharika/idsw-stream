@@ -1,130 +1,76 @@
 # IDSW Stream
 
-The streaming website for [Indonesia Software Developer Conference](https://www.idsw.dev/). Switch between Day 1 and Day 2 recordings through an embedded Google Drive player, with the conference website's header, navigation, branding, and footer.
+The video site for [Indonesia Software Developer Conference](https://www.idsw.dev/). It uses the conference site's header, branding, navigation, and footer, with a responsive Mux Player and accessible Day 1 / Day 2 tabs.
 
 ## Getting started
 
-Use Node.js 22 and npm. After cloning the repository:
+Use Node.js 22 and npm:
 
 ```bash
 nvm use
 npm ci
-cp .env.example .env.local
+test -e .env.local || cp .env.example .env.local
 npm run dev
 ```
 
-Open <http://localhost:3000>. Stop the server with Ctrl+C. The example environment includes the conference recording IDs; no Google API credentials are required. Edit `.env.local` to change the recordings or initially selected day.
+Open <http://localhost:3000>. The page shows an unavailable message until you configure signed Mux playback. To run a production build locally, use `npm run build` followed by `npm start`.
 
-To run a production build locally:
+## Video configuration
 
-```bash
-npm run build
-npm start
-```
+Set the following values in `.env.local` or your hosting environment:
+
+| Variable | Meaning |
+| --- | --- |
+| `DAY_1_ID` | Signed Mux **playback ID** for Day 1, not its asset ID |
+| `DAY_2_ID` | Signed Mux **playback ID** for Day 2 |
+| `MUX_SIGNING_KEY_ID` | Mux signing key ID |
+| `MUX_SIGNING_PRIVATE_KEY` | Base64-encoded private key returned when that key was created |
+| `MUX_PLAYBACK_RESTRICTION_ID` | Referrer restriction ID for allowed app hostnames |
+| `DEFAULT_DAY` | Initially selected day: `1` or `2` (defaults to `1`) |
+
+Create the playback IDs, signing key, and referrer restriction through the [Mux API](https://www.mux.com/docs/guides/secure-video-playback). The API access token used for setup is **not** needed by this viewer. Keep the private signing key server-only; never use `NEXT_PUBLIC_` for it or commit `.env.local`. The app signs playback, thumbnail, and storyboard tokens on the server and includes the restriction ID. It does not expose a direct Mux viewing link.
+
+A referrer restriction limits ordinary browser playback to configured hostnames, but this version does not authenticate viewers. Anyone able to open an allowed site can receive a signed token, which can be reused until it expires. The current recordings are about eight hours long, so tokens remain valid for ten hours to avoid interrupting playback. Attendee authorization requires a separate login system.
+
+The app also sends `Content-Security-Policy: frame-ancestors 'self'` to prevent other sites from embedding its page in an iframe.
+
+If an ID, signing key, or restriction is missing or invalid, the corresponding day shows an unavailable message. Switching days removes the previous player and stops its playback. Reloading selects `DEFAULT_DAY`. JavaScript is required for the Mux player. The page reads configuration at request time; restart the local server after editing `.env.local`, or redeploy after changing hosted environment variables.
 
 ## Deploy to Vercel
 
-Push this application's Git repository to your Git provider, then import it as a new Vercel project. The repository root should contain `package.json`, `app/`, and `public/`. Keep local environment files, dependencies, and build output out of Git.
+Import this repository as a Vercel project with the Next.js framework preset and Node.js `22.x`. Use the repository root as the project root, `npm ci` to install, and `npm run build` to build. Leave the output directory at the framework default.
 
-Use these project settings:
+Add the six viewer variables above to the desired project environments. `.env.local` is ignored by Git and is not uploaded. Make sure the Vercel hostname and any custom stream domain are in the Mux referrer restriction, then redeploy. Do not add the Mux management API token ID or secret to Vercel. The player fetches video directly from Mux; this app does not proxy media.
 
-| Setting | Value |
-| --- | --- |
-| Framework Preset | Next.js |
-| Root Directory | `./` when this app is the repository root |
-| Node.js Version | `22.x` (also specified in `package.json`) |
-| Install Command | `npm ci` |
-| Build Command | `npm run build` |
-| Output Directory | Leave the Next.js default; do not select `out` |
-
-Vercel supports this app's Next.js server rendering without a custom `vercel.json`. Its [Node.js version selection](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions) respects `package.json`; the major version is pinned to match local development and CI. See [Next.js on Vercel](https://vercel.com/docs/frameworks/full-stack/nextjs) for the framework integration.
-
-Before deploying, add `DAY_1_ID`, `DAY_2_ID`, and `DEFAULT_DAY` from `.env.example` to the project's **Environment Variables** for **Production** and **Preview**. Vercel does not obtain these values from your ignored `.env.local`, and `.env.example` is documentation, not an automatically loaded environment file. Missing video IDs allow the build to succeed but show unavailable recordings. [Environment changes apply to new deployments](https://vercel.com/docs/environment-variables), so redeploy after changing them.
-
-After deployment, open the HTTPS URL in a signed-out browser and verify both recordings, day switching, the default day after reloading, fullscreen, and the mobile layout. The video is served directly by Google Drive; the app does not proxy media through Vercel. No database or Google API credentials are required.
-
-This version provides unauthenticated access to the configured recordings. Drive sharing settings still control file access, and Drive preview errors can occur independently of a successful Vercel deployment. The direct viewing link remains available when a preview fails.
+After deployment, test both recordings in a signed-out browser, including playback, seeking, day switching, fullscreen, and mobile layout. Also verify that a hostname outside the restriction cannot play the videos. Mux asset readiness and restriction rules can fail independently of a successful Vercel build.
 
 ## Project structure
 
 ```text
-.
-├── app/
-│   ├── layout.tsx       Shared shell and page metadata
-│   ├── page.tsx         Main page content
-│   └── globals.css      Conference typography and styles
-├── components/
-│   ├── SiteHeader.tsx   Shared navigation
-│   ├── HeaderBehavior.tsx  Mobile menu and scroll behavior
-│   ├── SiteFooter.tsx   Event information and social links
-│   └── VideoTabs.tsx    Day selection and embedded player
-├── config/video.ts     Runtime video configuration and validation
-├── .env.example        Recording IDs and default day
-├── public/assets/      Conference branding, icons, and local fonts
-├── tests/              Browser checks
-└── .github/workflows/  Continuous integration
+app/                 Next.js page, layout, and styles
+components/          Conference shell and day tabs
+config/video.ts      Server-side signing and runtime video configuration
+public/assets/       Conference branding, icons, and local fonts
+tests/               Browser and signing checks
+.env.example         Example playback settings
 ```
-
-## Video configuration
-
-Set these variables in `.env.local`, or in your hosting environment:
-
-| Variable | Value |
-| --- | --- |
-| `DAY_1_ID` | Google Drive file ID for Day 1 |
-| `DAY_2_ID` | Google Drive file ID for Day 2 |
-| `DEFAULT_DAY` | Initially selected day: `1` or `2` (defaults to `1`) |
-
-Use only the ID between `/d/` and `/view` in the share link, not the full URL. The server derives each video's preview and direct viewing URLs. Missing or malformed IDs display a recording-unavailable message for that day. A missing or invalid `DEFAULT_DAY` falls back to Day 1.
-
-The home page reads these settings on the server at request time, so the same production build can run with different values. Restart the server after editing `.env.local`; for hosted deployments, set the variables in the hosting dashboard and redeploy. Keep `.env.local` out of Git.
-
-The centered tabs switch recordings without reloading the page. Selecting a different day removes the previous player and stops its playback; returning to a day starts a new player. Reloading restores the configured default. Left/Right Arrow and Home/End move tab focus; Enter or Space selects the focused day. Without JavaScript, the default recording and direct links for both configured days are available.
-
-In Google Drive, allow the intended viewers to view the file. For playback without a Google account, use **Share → General access → Anyone with the link → Viewer** ([Google's sharing guide](https://support.google.com/drive/answer/2494822?hl=en)). Check the preview in a signed-out browser after uploading and processing the video. This app does not authenticate viewers; access to the recording follows the file's Google Drive sharing settings.
-
-The player uses a responsive 16:9 frame with a minimum height of 280px so Google's controls and error messages fit on narrow screens. It allows fullscreen and does not request autoplay. Google Drive needs an internet connection and JavaScript for playback. Its own preview displays any access, processing, or playback error. Each configured recording includes **Open in Google Drive** so viewers can try the original file; that link does not bypass sharing restrictions. The app cannot inspect errors inside the cross-origin player.
 
 ## Development
 
-The app uses Next.js App Router, React, and TypeScript. The server reads the video environment settings and passes the configured recordings to a small client component for tab interaction. The shared header and footer render on the server; a separate client component enhances the header with menu and scroll behavior, cleaning up listeners on unmount.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run check` | Run lint, type checking, and production build |
+| `npm run test:e2e` | Run browser checks against the production build |
 
-Edit `app/page.tsx` for main content, `components/` for the shared shell, and `app/globals.css` for presentation. Static assets in `public/assets/` are served at `/assets/`. Fonts are hosted locally. The preserved conference stylesheet contains the CSS used by the shared markup and can be edited directly.
+For a full check, run `npm run check`, `npx playwright install chromium`, then `npm run test:e2e`. The browser suite verifies token creation, tabs, layout, navigation, and missing configuration. It does not replace testing real Mux playback on the final hostnames and devices.
 
-| Command             | Purpose                                                            |
-| ------------------- | ------------------------------------------------------------------ |
-| `npm run dev`       | Start the development server                                       |
-| `npm run build`     | Create the production build                                        |
-| `npm start`         | Serve the production build                                         |
-| `npm run lint`      | Check code with ESLint                                             |
-| `npm run typecheck` | Generate route types and check TypeScript                          |
-| `npm run check`     | Run lint, type checking, and production build                      |
-| `npm run test:e2e`  | Run desktop and mobile browser checks against the production build |
-
-Before submitting changes:
-
-```bash
-npm run check
-npx playwright install chromium
-npm run test:e2e
-```
-
-The browser suite starts production servers on ports 3100 and 3101 with separate test environment settings. It checks both configured defaults from the same build, day switching and removal of the old player, keyboard tabs, missing/invalid configuration, responsive sizing, the fallback link, asset loading, menu behavior, and content without JavaScript. It supplies its own file IDs and stubs Google Drive requests to keep app checks independent of the provider; it does not verify real video playback. CI installs the required Linux browser dependencies and runs the same checks.
-
-When making changes:
-
-- Check desktop and mobile layouts.
-- Verify keyboard navigation and visible focus states.
-- Test the mobile menu and header while scrolling.
-- With both real Google Drive recordings, check play/pause, day switching, seeking, fullscreen, and signed-out access on desktop and mobile.
-- Keep the shared header and footer consistent with the conference website.
+Edit `app/page.tsx` for page content, `components/` for the shell and tabs, and `app/globals.css` for styling. Static assets are served from `public/assets/`. Keep the shared header, footer, logo, and typography consistent with the [conference website](https://github.com/idsw-dev/conference).
 
 ## Contributing
 
-Issues and pull requests are welcome. Describe the change and include desktop and mobile screenshots for visual updates. Keep contributions focused and include the checks you performed.
+Issues and pull requests are welcome. Describe the change and checks performed; include desktop and mobile screenshots for visual updates. Keep credentials and `.env.local` out of Git.
 
 ## Credits
 
-Shared layout and branding come from the [IDSW conference website](https://github.com/idsw-dev/conference/tree/d9604a23065a3a33dd9bbd1b1b0682ccfa5a5806). Its shared markup is preserved in React components with the original CSS, font files, logo, and icons.
-
-Plus Jakarta Sans is distributed under the [SIL Open Font License](public/assets/fonts/OFL.txt). Other third-party notices are included in [public/assets/licenses/](public/assets/licenses/).
+Shared layout and branding come from the [IDSW conference website](https://github.com/idsw-dev/conference/tree/d9604a23065a3a33dd9bbd1b1b0682ccfa5a5806). Plus Jakarta Sans is distributed under the [SIL Open Font License](public/assets/fonts/OFL.txt). Other third-party notices are in [public/assets/licenses/](public/assets/licenses/).

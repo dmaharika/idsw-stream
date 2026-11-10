@@ -4588,15 +4588,12 @@
   outline: 2px solid #fff;
   outline-offset: 4px;
 }
-.stream-direct-day + .stream-direct-day {
-  margin-inline-start: 1rem;
-}
 .stream-player {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
-  /* Leave room for Drive's controls and error messages on narrow screens. */
+  /* Leave room for video controls and error messages on narrow screens. */
   min-height: 280px;
   border: 1px solid #ffffff33;
   border-radius: 0.75rem;
@@ -4616,17 +4613,6 @@
 .stream-player:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 4px;
-}
-.stream-help {
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  line-height: 1.75;
-  color: #e2e8f0;
-}
-.stream-help a {
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
 }
 .skip-link {
   z-index: 60;

@@ -1,11 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { dayTwoVideo, video } from "./video-fixtures";
 
-// Keep app checks independent of Drive's network, cookies, and playback limits.
+// Keep app checks independent of Mux's network and playback limits.
 // Real provider playback is verified separately in a browser.
 test.beforeEach(async ({ context }) => {
-  await context.route("https://drive.google.com/file/d/*/preview", (route) =>
-    route.fulfill({ contentType: "text/html", body: "<p>Video preview</p>" }),
+  await context.route("https://image.mux.com/**", (route) =>
+    route.fulfill({
+      contentType: "image/png",
+      body: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/lH8AAAAASUVORK5CYII=", "base64"),
+    }),
   );
 });
 
@@ -17,33 +20,30 @@ test("renders the responsive video and conference shell without app errors", asy
   page.on("console", (message) => {
     if (message.type() === "error") errors.push(message.text());
   });
-  page.on("requestfailed", (request) => errors.push(request.url()));
+  page.on("requestfailed", (request) => {
+    if (request.url().startsWith("http://127.0.0.1:3100/")) errors.push(request.url());
+  });
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
   await expect(page).toHaveTitle("IDSW Stream");
   await page.evaluate(() => document.fonts.ready);
   await expect(page.getByRole("tablist", { name: "Conference day" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "IDSW Stream" })).toHaveCount(0);
-  const player = page.locator("iframe");
+  const player = page.locator("mux-player");
   await expect(player).toHaveCount(1);
   await expect(player).toHaveAttribute("title", video.title);
   await expect(player).toHaveAttribute(
-    "src",
-    video.embedUrl,
+    "playback-id",
+    video.playbackId,
   );
-  await expect(player).toHaveAttribute("allow", "fullscreen");
-  await expect(player).toHaveAttribute("allowfullscreen", "");
   const bounds = await player.boundingBox();
   expect(bounds).not.toBeNull();
   expect(bounds!.height).toBeCloseTo(Math.max(280, bounds!.width * 9 / 16), 1);
-  await expect(page.getByRole("link", { name: "Open in Google Drive" })).toHaveAttribute(
-    "href",
-    video.watchUrl,
-  );
+  await expect(page.locator('a[href^="https://player.mux.com/"]')).toHaveCount(0);
   await expect(page.getByAltText("IDSW 2026")).toHaveCount(2);
   expect(
     await page
-      .locator("img")
+      .getByAltText("IDSW 2026")
       .evaluateAll((images) =>
         images.every((image) => image instanceof HTMLImageElement && image.complete && image.naturalWidth > 0),
       ),
@@ -62,15 +62,15 @@ test("renders the responsive video and conference shell without app errors", asy
   expect(errors).toEqual([]);
 });
 
-test("centered day tabs replace the player and its direct link", async ({ page }) => {
+test("centered day tabs replace the signed player", async ({ page }) => {
   await page.goto("/");
   const dayOne = page.getByRole("tab", { name: "Day 1" });
   const dayTwo = page.getByRole("tab", { name: "Day 2" });
   await expect(dayOne).toHaveAttribute("aria-selected", "true");
   await expect(dayTwo).toHaveAttribute("aria-selected", "false");
-  const firstPlayer = await page.locator("iframe").elementHandle();
+  const firstPlayer = await page.locator("mux-player").elementHandle();
   const tabsBounds = (await page.getByRole("tablist").boundingBox())!;
-  const playerBounds = (await page.locator("iframe").boundingBox())!;
+  const playerBounds = (await page.locator("mux-player").boundingBox())!;
   expect(tabsBounds.x + tabsBounds.width / 2).toBeCloseTo(
     playerBounds.x + playerBounds.width / 2,
     0,
@@ -80,17 +80,14 @@ test("centered day tabs replace the player and its direct link", async ({ page }
   await expect(dayTwo).toHaveAttribute("aria-selected", "true");
   await expect(dayOne).toHaveAttribute("aria-selected", "false");
   await expect(page.getByRole("tabpanel", { name: "Day 2" })).toBeVisible();
-  await expect(page.locator("iframe")).toHaveCount(1);
-  await expect(page.locator("iframe")).toHaveAttribute("src", dayTwoVideo.embedUrl);
-  await expect(page.getByRole("link", { name: "Open in Google Drive" })).toHaveAttribute(
-    "href", dayTwoVideo.watchUrl,
-  );
+  await expect(page.locator("mux-player")).toHaveCount(1);
+  await expect(page.locator("mux-player")).toHaveAttribute("playback-id", dayTwoVideo.playbackId);
   expect(await firstPlayer!.evaluate((element) => element.isConnected)).toBe(false);
-  expect((await page.locator("iframe").boundingBox())!.height).toBe(playerBounds.height);
+  expect((await page.locator("mux-player").boundingBox())!.height).toBe(playerBounds.height);
 
-  const secondPlayer = await page.locator("iframe").elementHandle();
+  const secondPlayer = await page.locator("mux-player").elementHandle();
   await dayOne.click();
-  await expect(page.locator("iframe")).toHaveAttribute("src", video.embedUrl);
+  await expect(page.locator("mux-player")).toHaveAttribute("playback-id", video.playbackId);
   expect(await secondPlayer!.evaluate((element) => element.isConnected)).toBe(false);
 });
 
@@ -102,10 +99,10 @@ test("tabs support arrows, Home, End, and manual keyboard activation", async ({ 
   await page.keyboard.press("ArrowRight");
   await expect(dayTwo).toBeFocused();
   await expect(dayOne).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator("iframe")).toHaveAttribute("src", video.embedUrl);
+  await expect(page.locator("mux-player")).toHaveAttribute("playback-id", video.playbackId);
   await page.keyboard.press("Enter");
   await expect(dayTwo).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator("iframe")).toHaveAttribute("src", dayTwoVideo.embedUrl);
+  await expect(page.locator("mux-player")).toHaveAttribute("playback-id", dayTwoVideo.playbackId);
   await page.keyboard.press("ArrowRight");
   await expect(dayOne).toBeFocused();
   await page.keyboard.press("ArrowLeft");
@@ -124,34 +121,24 @@ test("tabs support arrows, Home, End, and manual keyboard activation", async ({ 
 test("runtime env selects Day 2 and a missing Day 1 stays usable", async ({ page }) => {
   await page.goto("http://127.0.0.1:3101");
   await expect(page.getByRole("tab", { name: "Day 2" })).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator("iframe")).toHaveAttribute("src", dayTwoVideo.embedUrl);
-  const previousPlayer = await page.locator("iframe").elementHandle();
+  await expect(page.locator("mux-player")).toHaveAttribute("playback-id", dayTwoVideo.playbackId);
+  const previousPlayer = await page.locator("mux-player").elementHandle();
   await page.getByRole("tab", { name: "Day 1" }).click();
   await expect(page.getByRole("status")).toContainText("Day 1 recording is not available yet.");
-  await expect(page.locator("iframe")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Open in Google Drive" })).toHaveCount(0);
+  await expect(page.locator("mux-player")).toHaveCount(0);
   expect(await previousPlayer!.evaluate((element) => element.isConnected)).toBe(false);
   await page.getByRole("tab", { name: "Day 2" }).click();
-  await expect(page.locator("iframe")).toHaveAttribute("src", dayTwoVideo.embedUrl);
+  await expect(page.locator("mux-player")).toHaveAttribute("playback-id", dayTwoVideo.playbackId);
   await page.reload();
   await expect(page.getByRole("tab", { name: "Day 2" })).toHaveAttribute("aria-selected", "true");
 });
 
-test("the direct video link works when the embedded preview cannot load", async ({
-  page,
-  context,
-}) => {
-  await context.route(video.embedUrl, (route) => route.abort());
-  await context.route(video.watchUrl, (route) =>
-    route.fulfill({ contentType: "text/html", body: "<p>Direct video page</p>" }),
-  );
+test("signed playback has no direct viewing link or private key in page HTML", async ({ page }) => {
   await page.goto("/");
-  const newPage = context.waitForEvent("page");
-  await page.getByRole("link", { name: "Open in Google Drive" }).click();
-  const directVideo = await newPage;
-  await expect(directVideo).toHaveURL(video.watchUrl);
-  await expect(directVideo.locator("body")).toHaveText("Direct video page");
-  await expect(page.locator("main")).toBeVisible();
+  await expect(page.locator('a[href*="mux.com"]')).toHaveCount(0);
+  const html = await page.content();
+  expect(html).not.toContain("PRIVATE KEY");
+  expect(html).not.toContain("MUX_SIGNING_PRIVATE_KEY");
 });
 
 test("mobile navigation supports keyboard, Escape, link clicks, and resize", async ({
@@ -202,18 +189,13 @@ test("server-rendered content and CSS menu work without JavaScript", async ({
     viewport: { width: 390, height: 844 },
   });
   try {
-    await context.route(video.embedUrl, (route) =>
-      route.fulfill({ contentType: "text/html", body: "<p>Video preview</p>" }),
-    );
     const page = await context.newPage();
     await page.goto(baseURL!);
     await expect(page.getByAltText("IDSW 2026")).toHaveCount(2);
     await expect(page.locator("footer")).toContainText("Updates & Questions");
     await expect(page.getByRole("tablist", { name: "Conference day" })).toBeVisible();
-    await expect(page.locator("iframe")).toHaveAttribute("src", video.embedUrl);
-    await expect(page.getByRole("link", { name: "Open in Google Drive" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Day 1", exact: true })).toHaveAttribute("href", video.watchUrl);
-    await expect(page.getByRole("link", { name: "Day 2", exact: true })).toHaveAttribute("href", dayTwoVideo.watchUrl);
+    await expect(page.locator("mux-player")).toHaveAttribute("title", video.title);
+    await expect(page.locator('a[href*="mux.com"]')).toHaveCount(0);
     await page.locator(".site-nav-toggle").click();
     await expect(page.locator(".site-nav-panel")).toBeVisible();
   } finally {
