@@ -1,6 +1,6 @@
 # IDSW Stream
 
-Private conference recordings for [Indonesia Software Developer Conference](https://www.idsw.dev/). The app shares the conference site's branding and provides accessible Day 1 and Day 2 playback through Mux.
+Private conference recordings for [Indonesia Software Developer Conference](https://idsw.dev/). The app shares the conference site's branding and provides accessible Day 1 and Day 2 playback through Mux.
 
 Viewers enter an allowlisted email address, receive a six-digit code through Resend, and sign in with that code. Google Sheets is the attendee source of truth. Upstash Redis holds short-lived codes, rate limits, and sessions. Mux playback tokens are issued only after the server verifies an active session and current allowlist membership.
 
@@ -25,6 +25,7 @@ Open <http://localhost:3000>. Fill `.env.local` with the values below before req
 | `MUX_SIGNING_PRIVATE_KEY` | Base64-encoded signing private key |
 | `MUX_PLAYBACK_RESTRICTION_ID` | Mux referrer restriction for the app hostnames |
 | `DEFAULT_DAY` | Initially selected day, `1` or `2` |
+| `HIDE_DAY_2` | Set to `true` to show only Day 1 and block Day 2 playback; set to `false` to show both tabs and honor `DEFAULT_DAY` |
 | `APP_URL` | Exact app origin, such as `http://localhost:3000` locally or the HTTPS production URL |
 | `GOOGLE_SHEET_ID` | Private spreadsheet ID |
 | `GOOGLE_SHEET_RANGE` | Header-inclusive range, such as `'Allowlist'!A:D` |
@@ -37,7 +38,7 @@ Open <http://localhost:3000>. Fill `.env.local` with the values below before req
 
 The Sheet must have `email`, `name`, and `enabled` or `status` headers. Values `TRUE`, `enabled`, `active`, `1`, and `yes` grant access; conflicting duplicate rows deny access. The service account needs the Sheets read-only scope and Viewer access to the spreadsheet. Keep all credentials server-only and out of Git. Do not prefix them with `NEXT_PUBLIC_`.
 
-The app limits code requests and verification attempts, expires codes after five minutes, enforces a one-minute resend cooldown, and permits one active session per email. Sessions use an HTTP-only cookie and expire after 24 hours of inactivity. A removed attendee cannot receive new playback tokens after the short Sheet cache expires. Mux tokens are renewed while the recording is open so long recordings can continue playing.
+The app limits code requests and verification attempts, expires codes after five minutes, enforces a one-minute resend cooldown, and permits one active session per email. Sessions use an HTTP-only cookie and expire after 24 hours of inactivity. A removed attendee cannot receive new playback tokens after the short Sheet cache expires. Mux tokens are renewed while the recording is open so long recordings can continue playing. With `HIDE_DAY_2=true`, Day 2 is removed from the page and its token endpoint returns 404, even if `DEFAULT_DAY=2`. Set `HIDE_DAY_2=false` and `DEFAULT_DAY=2` to open Day 2 first once it is available.
 
 ## Development
 
@@ -72,4 +73,4 @@ Issues and pull requests are welcome. Describe the behavior changed and checks p
 
 ## Credits
 
-Shared layout and branding come from the [IDSW conference website](https://github.com/idsw-dev/conference/tree/d9604a23065a3a33dd9bbd1b1b0682ccfa5a5806). Plus Jakarta Sans is distributed under the [SIL Open Font License](public/assets/fonts/OFL.txt). Other third-party notices are in [public/assets/licenses/](public/assets/licenses/).
+Shared layout and branding come from the [IDSW conference website](https://github.com/idsw-dev/conference/tree/13a9c92b23599d559a944331c091dab3e84ed884). Plus Jakarta Sans is distributed under the [SIL Open Font License](public/assets/fonts/OFL.txt). Other third-party notices are in [public/assets/licenses/](public/assets/licenses/).

@@ -15,7 +15,7 @@ export default function SiteHeader() {
           />
           <div className="flex items-center justify-between">
             <a
-              href="https://www.idsw.dev/"
+              href="https://idsw.dev/"
               className="relative z-10 flex items-center"
             >
               <Image
@@ -58,7 +58,7 @@ export default function SiteHeader() {
             <ul className="hidden items-center gap-1 md:flex">
               <li>
                 <a
-                  href="https://www.idsw.dev/"
+                  href="https://idsw.dev/"
                   className="site-nav-link inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Home
@@ -66,7 +66,7 @@ export default function SiteHeader() {
               </li>
               <li>
                 <a
-                  href="https://www.idsw.dev/#keynote-speakers"
+                  href="https://idsw.dev/#keynote-speakers"
                   className="site-nav-link inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Speakers
@@ -74,7 +74,15 @@ export default function SiteHeader() {
               </li>
               <li>
                 <a
-                  href="https://www.idsw.dev/#cfp"
+                  href="https://idsw.dev/#schedule"
+                  className="site-nav-link inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  Schedule
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://idsw.dev/#cfp"
                   className="site-nav-link inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   CFP
@@ -82,7 +90,7 @@ export default function SiteHeader() {
               </li>
               <li>
                 <a
-                  href="https://www.idsw.dev/#sponsors"
+                  href="https://idsw.dev/#sponsors"
                   className="site-nav-link inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Sponsors
@@ -90,7 +98,7 @@ export default function SiteHeader() {
               </li>
               <li>
                 <a
-                  href="https://www.idsw.dev/#previous-events"
+                  href="https://idsw.dev/#previous-events"
                   className="site-nav-link inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Previous Events
@@ -98,7 +106,7 @@ export default function SiteHeader() {
               </li>
               <li>
                 <a
-                  href="https://www.idsw.dev/#faq"
+                  href="https://idsw.dev/#faq"
                   className="site-nav-link inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   FAQ
@@ -106,7 +114,7 @@ export default function SiteHeader() {
               </li>
               <li>
                 <a
-                  href="https://www.idsw.dev/#contact"
+                  href="https://idsw.dev/#contact"
                   className="site-nav-link inline-flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Contact
@@ -145,7 +153,7 @@ export default function SiteHeader() {
             <ul className="flex flex-col">
               <li className="w-full">
                 <a
-                  href="https://www.idsw.dev/"
+                  href="https://idsw.dev/"
                   className="site-nav-link flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Home
@@ -153,7 +161,7 @@ export default function SiteHeader() {
               </li>
               <li className="w-full">
                 <a
-                  href="https://www.idsw.dev/#keynote-speakers"
+                  href="https://idsw.dev/#keynote-speakers"
                   className="site-nav-link flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Speakers
@@ -161,7 +169,15 @@ export default function SiteHeader() {
               </li>
               <li className="w-full">
                 <a
-                  href="https://www.idsw.dev/#cfp"
+                  href="https://idsw.dev/#schedule"
+                  className="site-nav-link flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  Schedule
+                </a>
+              </li>
+              <li className="w-full">
+                <a
+                  href="https://idsw.dev/#cfp"
                   className="site-nav-link flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   CFP
@@ -169,7 +185,7 @@ export default function SiteHeader() {
               </li>
               <li className="w-full">
                 <a
-                  href="https://www.idsw.dev/#sponsors"
+                  href="https://idsw.dev/#sponsors"
                   className="site-nav-link flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Sponsors
@@ -177,7 +193,7 @@ export default function SiteHeader() {
               </li>
               <li className="w-full">
                 <a
-                  href="https://www.idsw.dev/#previous-events"
+                  href="https://idsw.dev/#previous-events"
                   className="site-nav-link flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Previous Events
@@ -185,7 +201,7 @@ export default function SiteHeader() {
               </li>
               <li className="w-full">
                 <a
-                  href="https://www.idsw.dev/#faq"
+                  href="https://idsw.dev/#faq"
                   className="site-nav-link flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   FAQ
@@ -193,7 +209,7 @@ export default function SiteHeader() {
               </li>
               <li className="w-full">
                 <a
-                  href="https://www.idsw.dev/#contact"
+                  href="https://idsw.dev/#contact"
                   className="site-nav-link flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
                   Contact

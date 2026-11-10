@@ -136,7 +136,7 @@ export default function VideoTabs({ days, defaultDay }: Props) {
 
   return (
     <>
-      <div className="stream-tabs" role="tablist" aria-label="Conference day">
+      {days.length > 1 && <div className="stream-tabs" role="tablist" aria-label="Conference day">
         {days.map((day, index) => (
           <button key={day.id} ref={(element) => { tabs.current[index] = element; }} type="button" role="tab"
             id={`day-tab-${day.id}`} aria-controls={`day-panel-${day.id}`} aria-selected={selectedDay === day.id}
@@ -145,13 +145,15 @@ export default function VideoTabs({ days, defaultDay }: Props) {
             {day.label}
           </button>
         ))}
-      </div>
+      </div>}
       {state === "authenticated" && (
         <div className="stream-access"><span>Attendee access</span><button type="button" onClick={logout} disabled={logoutBusy}>{logoutBusy ? "Signing out…" : "Sign out"}</button></div>
       )}
       {days.map((day) => (
-        <div key={day.id} role="tabpanel" id={`day-panel-${day.id}`} aria-labelledby={`day-tab-${day.id}`}
-          hidden={selectedDay !== day.id} tabIndex={0} className="stream-panel">
+        <div key={day.id} role={days.length > 1 ? "tabpanel" : undefined} id={`day-panel-${day.id}`}
+          aria-label={days.length === 1 ? day.label : undefined}
+          aria-labelledby={days.length > 1 ? `day-tab-${day.id}` : undefined}
+          hidden={selectedDay !== day.id} tabIndex={days.length > 1 ? 0 : undefined} className="stream-panel">
           {selectedDay === day.id && (state === "checking" ? (
             <div className="stream-player stream-unavailable" role="status">
               <p>{notice || "Checking your access…"}</p>

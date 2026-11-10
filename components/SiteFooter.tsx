@@ -4,13 +4,13 @@ export default function SiteFooter() {
   return (
     <footer className="footer-gradient text-white">
       <div className="container-site py-16 md:py-20">
-        <div className="flex flex-row flex-wrap items-center justify-between gap-6 sm:gap-8">
+        <div className="footer-overview">
           <div className="min-w-0 flex-1">
             <p className="font-display text-2xl font-semibold md:text-3xl">
               IDSW 2026
             </p>
             <p className="mt-2 text-white/80">
-              21–22 Nov 2026, 08.30–17.30 WIB
+              21–22 Nov 2026
             </p>
             <a
               href="https://maps.google.com/?q=Usmar+Ismail+Hall+Jakarta"
@@ -20,8 +20,14 @@ export default function SiteFooter() {
             >
               Usmar Ismail Hall, Jakarta Selatan
             </a>
+            <dl className="footer-event-days">
+              <dt>Day 1</dt>
+              <dd>08.00–18.15 WIB</dd>
+              <dt>Day 2</dt>
+              <dd>09.00–18.15 WIB</dd>
+            </dl>
           </div>
-          <div className="shrink-0">
+          <div className="footer-marks">
             <Image
               width={264}
               height={120}
@@ -31,6 +37,23 @@ export default function SiteFooter() {
               alt="IDSW 2026"
               className="h-14 w-auto opacity-95 sm:h-16 md:h-20"
             />
+            <a
+              href="https://perkodi.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Perkumpulan Pengrajin Kode Indonesia"
+              className="footer-organizer"
+            >
+              <span>Organized by</span>
+              <Image
+                src="/assets/perkodi-logo-white.svg"
+                width={460}
+                height={89}
+                unoptimized
+                alt="PERKODI"
+                className="footer-organizer-logo"
+              />
+            </a>
           </div>
         </div>
       </div>
@@ -40,7 +63,7 @@ export default function SiteFooter() {
             <div className="min-w-0">
               <h2 className="text-lg font-semibold">Updates & Questions</h2>
               <p className="mt-1 text-sm text-white/70">
-                Follow us for news. Email if you&apos;re stuck.
+                Follow us for news.
               </p>
             </div>
             <ul className="flex flex-wrap gap-3">
@@ -154,45 +177,51 @@ export default function SiteFooter() {
               </li>
             </ul>
           </div>
-          <div className="mt-8 flex flex-wrap gap-4 border-t border-white/10 pt-6 text-xs text-white/60 sm:gap-6 sm:text-sm">
+          <div className="footer-navigation mt-8 border-t border-white/10 pt-6 text-xs text-white/60 sm:text-sm">
             <a
-              href="https://www.idsw.dev/"
+              href="https://idsw.dev/"
               className="transition-colors hover:text-white"
             >
               Home{" "}
             </a>
             <a
-              href="https://www.idsw.dev/#keynote-speakers"
+              href="https://idsw.dev/#keynote-speakers"
               className="transition-colors hover:text-white"
             >
               Speakers{" "}
             </a>
             <a
-              href="https://www.idsw.dev/#cfp"
+              href="https://idsw.dev/#schedule"
+              className="transition-colors hover:text-white"
+            >
+              Schedule{" "}
+            </a>
+            <a
+              href="https://idsw.dev/#cfp"
               className="transition-colors hover:text-white"
             >
               CFP{" "}
             </a>
             <a
-              href="https://www.idsw.dev/#sponsors"
+              href="https://idsw.dev/#sponsors"
               className="transition-colors hover:text-white"
             >
               Sponsors{" "}
             </a>
             <a
-              href="https://www.idsw.dev/#previous-events"
+              href="https://idsw.dev/#previous-events"
               className="transition-colors hover:text-white"
             >
               Previous Events{" "}
             </a>
             <a
-              href="https://www.idsw.dev/#faq"
+              href="https://idsw.dev/#faq"
               className="transition-colors hover:text-white"
             >
               FAQ{" "}
             </a>
             <a
-              href="https://www.idsw.dev/#contact"
+              href="https://idsw.dev/#contact"
               className="transition-colors hover:text-white"
             >
               Contact{" "}
@@ -206,23 +235,21 @@ export default function SiteFooter() {
               Tickets
             </a>
           </div>
-          <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-white/10 pt-6 text-xs text-white/50 sm:gap-4">
+          <div className="footer-legal mt-6 flex flex-wrap items-center border-t border-white/10 pt-6 text-xs text-white/50">
             <a
-              href="https://www.idsw.dev/code-of-conduct"
+              href="https://idsw.dev/code-of-conduct"
               className="transition-colors hover:text-white"
             >
               Code of Conduct
             </a>
-            <span className="text-white/20">·</span>
             <a
-              href="https://www.idsw.dev/terms-of-service"
+              href="https://idsw.dev/terms-of-service"
               className="transition-colors hover:text-white"
             >
               Terms of Service
             </a>
-            <span className="text-white/20">·</span>
             <a
-              href="https://www.idsw.dev/privacy-policy"
+              href="https://idsw.dev/privacy-policy"
               className="transition-colors hover:text-white"
             >
               Privacy Policy

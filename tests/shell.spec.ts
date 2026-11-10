@@ -1,10 +1,32 @@
 import { expect, test } from "@playwright/test";
 
+test("HIDE_DAY_2 shows only Day 1 without a day switcher", async ({ page }) => {
+  test.skip(process.env.HIDE_DAY_2 !== "true");
+  await page.goto("/");
+  await expect(page.getByRole("tablist", { name: "Conference day" })).toHaveCount(0);
+  await expect(page.locator("main").getByText("Day 2")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "You’re in the right place." })).toBeVisible();
+  await expect(page.locator("mux-player")).toHaveCount(0);
+});
+
+test("DEFAULT_DAY=2 opens Day 2 when both days are visible", async ({ page }) => {
+  test.skip(process.env.DEFAULT_DAY !== "2" || process.env.HIDE_DAY_2 === "true");
+  await page.goto("/");
+  await expect(page.getByRole("tab", { name: "Day 2" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tabpanel", { name: "Day 2" })).toBeVisible();
+});
+
 test("conference shell stays intact while recordings remain locked", async ({ page }) => {
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
   await expect(page).toHaveTitle("IDSW Stream");
   await expect(page.getByAltText("IDSW 2026")).toHaveCount(2);
+  await expect(page.locator("header a[href='https://idsw.dev/#schedule']")).toHaveCount(2);
+  await expect(page.locator("footer a[href='https://idsw.dev/#schedule']")).toHaveCount(1);
+  await expect(page.locator("footer a[title='Perkumpulan Pengrajin Kode Indonesia']")).toHaveAttribute("href", "https://perkodi.org");
+  await expect(page.locator("footer")).toContainText("21–22 Nov 2026");
+  await expect(page.locator("footer")).toContainText("08.00–18.15 WIB");
+  await expect(page.locator("footer")).toContainText("09.00–18.15 WIB");
   await expect(page.getByRole("tablist", { name: "Conference day" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "You’re in the right place." })).toBeVisible();
   await expect(page.locator("mux-player")).toHaveCount(0);

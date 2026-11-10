@@ -21,6 +21,7 @@ export default defineConfig({
       APP_URL: "http://127.0.0.1:3100",
       DAY_1_ID: "test-day-1",
       DAY_2_ID: "test-day-2",
+      HIDE_DAY_2: process.env.HIDE_DAY_2 ?? "false",
     },
   },
 });
